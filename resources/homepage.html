@@ -2,35 +2,210 @@
 <html lang="en">
 <head>
     <script src="/proxy/client/unblocker-client.js"></script>
-    <script>unblockerInit({"prefix":"/proxy/","url":"http://server.local/home/"}, window);</script>
+    <script>
+      unblockerInit({"prefix":"/proxy/","url":"http://server.local/home/"}, window);
+    </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Tab</title>
-    <link rel="stylesheet" href="css/home.css">
-<meta name="ROBOTS" content="NOINDEX, NOFOLLOW"/>
+    <meta name="ROBOTS" content="NOINDEX, NOFOLLOW"/>
+    <title>Bloxloxbam Browser</title>
+
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    * {
+        box-sizing: border-box;
+        font-family: 'Share Tech Mono', monospace;
+    }
+
+    body {
+        margin: 0;
+        background: black;
+        color: #00ff00;
+        overflow-x: hidden;
+        text-shadow: 0 0 6px rgba(0,255,0,0.6);
+    }
+
+    /* MATRIX BACKGROUND */
+    canvas {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+    }
+
+    /* SCANLINES */
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+            to bottom,
+            rgba(0,255,0,0.04),
+            rgba(0,255,0,0.04) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .container {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .content {
+        background: rgba(0, 20, 0, 0.85);
+        border: 1px solid #00ff00;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow:
+            0 0 20px rgba(0,255,0,0.6),
+            inset 0 0 20px rgba(0,255,0,0.2);
+        text-align: center;
+        max-width: 520px;
+        width: 100%;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .search-form input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        background: black;
+        border: 1px solid #00ff00;
+        color: #00ff00;
+        outline: none;
+        box-shadow: inset 0 0 10px rgba(0,255,0,0.4);
+    }
+
+    .search-form input[type="submit"] {
+        margin-top: 12px;
+        padding: 10px 20px;
+        background: transparent;
+        border: 1px solid #00ff00;
+        color: #00ff00;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0,255,0,0.6);
+    }
+
+    .engine-buttons {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .engine-button {
+        background: transparent;
+        border: 1px solid #00ff00;
+        color: #00ff00;
+        padding: 6px 12px;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(0,255,0,0.5);
+    }
+
+    .engine-button.selected {
+        background: rgba(0,255,0,0.15);
+    }
+
+    .recommended-apps {
+        text-align: center;
+        padding-bottom: 30px;
+    }
+
+    .recommended-apps h2 {
+        margin-bottom: 10px;
+    }
+
+    .app-link {
+        display: inline-block;
+        margin: 5px;
+        color: #00ff00;
+        text-decoration: none;
+        border: 1px solid #00ff00;
+        padding: 6px 12px;
+        box-shadow: 0 0 8px rgba(0,255,0,0.4);
+    }
+    </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="content">
-            <h1>UB Browser Homepage</h1>
-            <form class="search-form" id="searchForm" action="/proxy/https://www.torry.io/search?q=" method="get">
-                <input type="text" name="q" placeholder="Enter your search query" autocomplete="off" autocorrect="off"/>
-                <input type="submit" value="Search" />
-            </form>
-            <div class="engine-buttons">
-                <button class="engine-button selected" onclick="setEngine('/proxy/https://torry.io/search?q=', this)" title="(Slightly more secure)">Torry</button>
-                <button class="engine-button" onclick="setEngine('/proxy/https://www.wikihow.com/wikiHowTo', this)" title="(Information)">wikiHow</button>
-                <button class="engine-button" onclick="setEngine('/proxy/https://en.wikipedia.org/wiki/Special:Search', this)" title="(Information)">Wikipedia</button>
-                <button class="engine-button" onclick="setEngine('/proxy/https://duckduckgo.com/', this)" title="(Insecure)">DuckDuckGo</button>
-                <button class="engine-button" onclick="setEngine('/proxy/https://www.google.com/search', this)" title="(Insecure)">Google</button>
-            </div>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+    <div class="content">
+        <h1>Bloxloxbam Browser Homepage</h1>
+
+        <form class="search-form" id="searchForm"
+              action="/proxy/https://www.torry.io/search?q=" method="get">
+            <input type="text" name="q" placeholder="Enter your search query" autocomplete="off"/>
+            <input type="submit" value="Search">
+        </form>
+
+        <div class="engine-buttons">
+            <button class="engine-button selected"
+                onclick="setEngine('/proxy/https://torry.io/search?q=', this)">Torry</button>
+            <button class="engine-button"
+                onclick="setEngine('/proxy/https://www.wikihow.com/wikiHowTo', this)">wikiHow</button>
+            <button class="engine-button"
+                onclick="setEngine('/proxy/https://en.wikipedia.org/wiki/Special:Search', this)">Wikipedia</button>
+            <button class="engine-button"
+                onclick="setEngine('/proxy/https://duckduckgo.com/', this)">DuckDuckGo</button>
+            <button class="engine-button"
+                onclick="setEngine('/proxy/https://www.google.com/search', this)">Google</button>
         </div>
     </div>
-    <div class="recommended-apps">
-        <h2>Recommended Apps</h2>
-        <a class="app-link" href="/proxy/https://soundcloud.com">SoundCloud</a>
-        <a class="app-link" href="/proxy/https://invidious.io">Invidious</a>
-    </div>
-    <script src="scripts/homepage/home.js"></script>
+</div>
+
+<script src="scripts/homepage/home.js"></script>
+
+<script>
+/* MATRIX CODE RAIN */
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+const chars = "アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%";
+const fontSize = 16;
+let columns = Math.floor(canvas.width / fontSize);
+let drops = Array(columns).fill(1);
+
+function draw() {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ff00";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+        drops[i]++;
+    }
+}
+setInterval(draw, 33);
+</script>
+
 </body>
 </html>
